@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}{% if edited_user %}Edycja użytkownika{% else %}Nowy użytkownik{% endif %} | HR Service{% endblock %}
+{% block content %}
+<p><a href="{% url 'user_list' %}">&larr; Użytkownicy</a></p>
+<h1>{% if edited_user %}Edycja: {{ edited_user.username }}{% else %}Nowy użytkownik{% endif %}</h1>
+<form method="post" class="form card">
+  {% csrf_token %}
+  {% include 'partials/form.html' %}
+  <div class="actions">
+    <button type="submit" class="btn">{% if edited_user %}Zapisz zmiany{% else %}Utwórz konto{% endif %}</button>
+    {% if edited_user %}<a href="{% url 'user_password' edited_user.pk %}" class="btn btn--ghost">Ustaw nowe hasło</a>{% endif %}
+  </div>
+</form>
+{% endblock %}

@@ -19,6 +19,11 @@
     <a href="{% url 'documents:list' %}?kind=advice">Zobacz porady &rarr;</a>
   </article>
   <article class="card">
+    <h2>Portal HR</h2>
+    <p>Wnioski urlopowe, ogłoszenia kadr i Twoje dane — po zalogowaniu.</p>
+    <a href="{% url 'hr:dashboard' %}">Przejdź do portalu &rarr;</a>
+  </article>
+  <article class="card">
     <h2>Telefony</h2>
     <p>Wyszukaj numer telefonu, pokój lub e-mail współpracownika.</p>
     <a href="{% url 'phonebook:list' %}">Otwórz książkę telefoniczną &rarr;</a>
@@ -27,6 +32,11 @@
     <h2>Programy</h2>
     <p>Instalatory programów potrzebnych do pracy.</p>
     <a href="{% url 'documents:software' %}">Zobacz programy &rarr;</a>
+  </article>
+  <article class="card">
+    <h2>Przydatne linki</h2>
+    <p>Urzędy, systemy firmowe i serwisy, z których korzystasz na co dzień.</p>
+    <a href="{% url 'pages:links' %}">Zobacz linki &rarr;</a>
   </article>
 </section>
 {% endblock %}

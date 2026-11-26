@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}{% block hr_title %}Portal HR{% endblock %} | HR Service{% endblock %}
+{% block content %}
+<div class="hr-portal">
+  <aside class="hr-nav">
+    <p class="hr-nav__title">Portal HR</p>
+    <nav>
+      <a href="{% url 'hr:dashboard' %}" {% if hr_section == 'dashboard' %}class="active"{% endif %}>Pulpit</a>
+      <a href="{% url 'hr:announcements' %}" {% if hr_section == 'announcements' %}class="active"{% endif %}>Ogłoszenia</a>
+      <a href="{% url 'hr:leave_list' %}" {% if hr_section == 'leave' %}class="active"{% endif %}>Moje urlopy</a>
+      <a href="{% url 'hr:my_profile' %}" {% if hr_section == 'profile' %}class="active"{% endif %}>Moje dane</a>
+      {% if perms.hr.review_leaverequest %}
+        <p class="hr-nav__group">Dział HR</p>
+        <a href="{% url 'hr:leave_review' %}" {% if hr_section == 'review' %}class="active"{% endif %}>
+          Wnioski do rozpatrzenia {% if hr_pending_count %}<span class="badge">{{ hr_pending_count }}</span>{% endif %}
+        </a>
+        {% if perms.hr.change_employeeprofile %}<a href="{% url 'admin:hr_employeeprofile_changelist' %}">Profile kadrowe</a>{% endif %}
+      {% endif %}
+    </nav>
+  </aside>
+  <section class="hr-main">
+    {% block hr_content %}{% endblock %}
+  </section>
+</div>
+{% endblock %}

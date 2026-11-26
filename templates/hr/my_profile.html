@@ -1,0 +1,55 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}Moje dane{% endblock %}
+{% block hr_content %}
+<h1>Moje dane</h1>
+{% if not profile %}
+  <div class="alert alert--warning">Twój profil kadrowy nie został jeszcze uzupełniony. Skontaktuj się z działem HR.</div>
+  <div class="card">
+    <dl class="details">
+      <dt>Imię i nazwisko</dt><dd>{{ user.get_full_name|default:"—" }}</dd>
+      <dt>Login</dt><dd>{{ user.username }}</dd>
+      <dt>E-mail</dt><dd>{{ user.email|default:"—" }}</dd>
+    </dl>
+  </div>
+{% else %}
+  <div class="hr-columns">
+    <div class="card">
+      <h2>Zatrudnienie</h2>
+      <dl class="details">
+        <dt>Imię i nazwisko</dt><dd>{{ user.get_full_name|default:user.username }}</dd>
+        {% if profile.employee_number %}<dt>Nr ewidencyjny</dt><dd>{{ profile.employee_number }}</dd>{% endif %}
+        <dt>Stanowisko</dt><dd>{{ entry.position|default:"—" }}</dd>
+        <dt>Wydział</dt><dd>{{ entry.department|default:"—" }}</dd>
+        <dt>Dział</dt><dd>{{ entry.section.name|default:"—" }}</dd>
+        <dt>Przełożony</dt><dd>{% if profile.manager %}{{ profile.manager.get_full_name|default:profile.manager.username }}{% else %}—{% endif %}</dd>
+        <dt>Data zatrudnienia</dt><dd>{{ profile.hire_date|date:"j E Y"|default:"—" }}</dd>
+        <dt>Rodzaj umowy</dt><dd>{{ profile.get_contract_type_display }}</dd>
+        <dt>Wymiar etatu</dt><dd>{{ profile.working_time|floatformat:"-2" }}</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <h2>Kontakt</h2>
+      <dl class="details">
+        <dt>E-mail</dt><dd>{{ entry.email|default:user.email|default:"—" }}</dd>
+        <dt>Telefon</dt><dd>{{ entry.phone|default:"—" }}</dd>
+        <dt>Pokój</dt><dd>{{ entry.room|default:"—" }}</dd>
+      </dl>
+      <h2>Urlop {{ year }}</h2>
+      <div class="leave-meter" role="img" aria-label="Wykorzystano {{ leave_approved }} z {{ profile.leave_total }} dni">
+        <span class="leave-meter__used" style="flex: {{ leave_approved }}"></span>
+        <span class="leave-meter__pending" style="flex: {{ leave_pending }}"></span>
+        <span class="leave-meter__free" style="flex: {{ profile.leave_remaining }}"></span>
+      </div>
+      <dl class="details">
+        <dt>Wymiar roczny</dt><dd>{{ profile.annual_leave_days }} dni</dd>
+        <dt>Zaległy</dt><dd>{{ profile.carried_over_days }} dni</dd>
+        <dt>Wykorzystany</dt><dd>{{ leave_approved }} dni</dd>
+        <dt>Oczekujące wnioski</dt><dd>{{ leave_pending }} dni</dd>
+        <dt>Pozostało</dt><dd><strong>{{ profile.leave_remaining }} dni</strong></dd>
+        <dt>Urlop na żądanie</dt><dd>{{ on_demand_used }} / {{ on_demand_limit }} dni</dd>
+      </dl>
+    </div>
+  </div>
+  <p class="muted small">Zauważyłeś błąd w danych? Zgłoś go do działu HR.</p>
+{% endif %}
+{% endblock %}

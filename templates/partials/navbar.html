@@ -26,9 +26,14 @@
       </div>
       {% url 'phonebook:list' as phones_url %}
       <a href="{{ phones_url }}" {% if request.path == phones_url %}class="active"{% endif %}>Telefony</a>
+      {% url 'hr:dashboard' as hr_url %}
+      <a href="{{ hr_url }}" class="nav-hr{% if '/hr/' in request.path %} active{% endif %}">{% if not user.is_authenticated %}<span aria-hidden="true">🔒</span> {% endif %}Portal HR</a>
       {% url 'documents:software' as software_url %}
       <a href="{{ software_url }}" {% if request.path == software_url %}class="active"{% endif %}>Programy</a>
+      {% url 'pages:links' as links_url %}
+      <a href="{{ links_url }}" {% if request.path == links_url %}class="active"{% endif %}>Przydatne linki</a>
       {% if user.is_authenticated %}
+        {% if perms.auth.change_user %}{% url 'user_list' as users_url %}<a href="{{ users_url }}" {% if '/uzytkownicy/' in request.path %}class="active"{% endif %}>Użytkownicy</a>{% endif %}
         {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
         <a href="{% url 'profile' %}">{{ user.username }}</a>
         <form method="post" action="{% url 'logout' %}" class="inline">

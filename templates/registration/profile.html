@@ -5,6 +5,7 @@
 <dl class="details">
   <dt>Login</dt><dd>{{ user.username }}</dd>
   <dt>E-mail</dt><dd>{{ user.email|default:"—" }}</dd>
+  <dt>Rola</dt><dd>{% if user.is_superuser %}Superużytkownik{% elif role %}{{ role.name }} <small class="muted">— {{ role.description }}</small>{% else %}—{% endif %}</dd>
   <dt>Data dołączenia</dt><dd>{{ user.date_joined|date:"j E Y" }}</dd>
 </dl>
 <p><a href="{% url 'password_change' %}">Zmień hasło</a></p>

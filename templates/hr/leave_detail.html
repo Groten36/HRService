@@ -1,0 +1,52 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}Wniosek urlopowy{% endblock %}
+{% block hr_content %}
+<p>{% if hr_section == 'review' %}<a href="{% url 'hr:leave_review' %}">&larr; Wnioski do rozpatrzenia</a>{% else %}<a href="{% url 'hr:leave_list' %}">&larr; Moje wnioski</a>{% endif %}</p>
+<article class="card">
+  <div class="page-header">
+    <h1>{{ leave.get_leave_type_display }}</h1>
+    {% include 'hr/_status.html' %}
+  </div>
+  <dl class="details">
+    <dt>Pracownik</dt><dd>{{ leave.user.get_full_name|default:leave.user.username }}</dd>
+    <dt>Termin</dt><dd>{{ leave.start_date|date:"l, j E Y" }} – {{ leave.end_date|date:"l, j E Y" }}</dd>
+    <dt>Dni robocze</dt><dd>{{ leave.days }}</dd>
+    {% if leave.substitute %}<dt>Zastępstwo</dt><dd>{{ leave.substitute }}</dd>{% endif %}
+    {% if leave.note %}<dt>Uwagi</dt><dd>{{ leave.note|linebreaksbr }}</dd>{% endif %}
+    <dt>Złożono</dt><dd>{{ leave.created_at|date:"j E Y, H:i" }}</dd>
+    {% if leave.reviewed_at %}
+      <dt>Rozpatrzono</dt><dd>{{ leave.reviewed_at|date:"j E Y, H:i" }}{% if leave.reviewed_by %} — {{ leave.reviewed_by.get_full_name|default:leave.reviewed_by.username }}{% endif %}</dd>
+    {% endif %}
+    {% if leave.review_comment %}<dt>Komentarz HR</dt><dd>{{ leave.review_comment|linebreaksbr }}</dd>{% endif %}
+  </dl>
+
+  {% if can_cancel %}
+    <form method="post" action="{% url 'hr:leave_cancel' leave.pk %}" class="actions">
+      {% csrf_token %}
+      <button type="submit" class="btn btn--ghost" onclick="return confirm('Anulować wniosek?')">Anuluj wniosek</button>
+    </form>
+  {% endif %}
+</article>
+
+{% if can_review %}
+  <section class="card review-box">
+    <h2>Decyzja</h2>
+    {% if employee_profile %}
+      <p class="muted">Pozostały urlop pracownika (wliczając ten wniosek): <strong>{{ employee_profile.leave_remaining }}</strong> z {{ employee_profile.leave_total }} dni.</p>
+    {% else %}
+      <p class="alert alert--warning">Pracownik nie ma profilu kadrowego.</p>
+    {% endif %}
+    <form method="post" class="form">
+      {% csrf_token %}
+      <div class="form-field{% if review_form.comment.errors %} form-field--error{% endif %}">
+        {{ review_form.comment.label_tag }}{{ review_form.comment }}
+        {% for e in review_form.comment.errors %}<small class="error">{{ e }}</small>{% endfor %}
+      </div>
+      <div class="actions">
+        <button type="submit" name="decision" value="approved" class="btn btn--success">Zaakceptuj</button>
+        <button type="submit" name="decision" value="rejected" class="btn btn--danger">Odrzuć</button>
+      </div>
+    </form>
+  </section>
+{% endif %}
+{% endblock %}

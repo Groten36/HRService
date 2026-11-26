@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Usuwanie użytkownika | HR Service{% endblock %}
+{% block content %}
+<div class="auth-box">
+  <h1>Usunąć konto?</h1>
+  <p>Konto <strong>{{ edited_user.username }}</strong>{% if edited_user.get_full_name %} ({{ edited_user.get_full_name }}){% endif %} zostanie trwale usunięte wraz z jego wnioskami urlopowymi i profilem kadrowym.</p>
+  <p class="muted small">Jeśli chcesz tylko zablokować logowanie, odznacz „Aktywny” w edycji konta.</p>
+  <form method="post" class="actions">
+    {% csrf_token %}
+    <button type="submit" class="btn btn--danger">Tak, usuń</button>
+    <a href="{% url 'user_list' %}" class="btn btn--ghost">Anuluj</a>
+  </form>
+</div>
+{% endblock %}

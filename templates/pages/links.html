@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Przydatne linki | HR Service{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Przydatne linki</h1>
+  {% if perms.pages.add_usefullink %}<a href="{% url 'admin:pages_linkgroup_changelist' %}" class="btn btn--ghost">Zarządzaj linkami</a>{% endif %}
+</div>
+
+{% for group in groups %}
+  <section class="link-group">
+    <h2>{{ group.name }}</h2>
+    <div class="link-grid">
+      {% for link in group.active_links %}{% include 'pages/_link.html' %}{% endfor %}
+    </div>
+  </section>
+{% endfor %}
+
+{% if ungrouped %}
+  <section class="link-group">
+    {% if groups %}<h2>Inne</h2>{% endif %}
+    <div class="link-grid">
+      {% for link in ungrouped %}{% include 'pages/_link.html' %}{% endfor %}
+    </div>
+  </section>
+{% endif %}
+
+{% if not groups and not ungrouped %}
+  <div class="empty"><p>Nie dodano jeszcze żadnych linków.</p></div>
+{% endif %}
+{% endblock %}

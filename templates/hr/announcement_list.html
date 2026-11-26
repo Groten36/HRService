@@ -1,0 +1,21 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}Ogłoszenia{% endblock %}
+{% block hr_content %}
+<div class="page-header">
+  <h1>Ogłoszenia HR</h1>
+  {% if perms.hr.add_announcement %}<a href="{% url 'hr:announcement_create' %}" class="btn">+ Nowe ogłoszenie</a>{% endif %}
+</div>
+{% for a in announcements %}
+  <article class="card announcement{% if a.is_pinned %} announcement--pinned{% endif %}">
+    <h2><a href="{{ a.get_absolute_url }}">{{ a.title }}</a></h2>
+    <p class="muted small">
+      {% if a.is_pinned %}📌 Przypięte · {% endif %}{{ a.created_at|date:"j E Y" }}{% if a.created_by %} · {{ a.created_by.get_full_name|default:a.created_by.username }}{% endif %}
+      {% if not a.is_published %}<span class="tag tag--draft">Nieopublikowane</span>{% endif %}
+    </p>
+    <p>{{ a.body|truncatewords:50 }}</p>
+  </article>
+{% empty %}
+  <div class="empty"><p>Brak ogłoszeń.</p></div>
+{% endfor %}
+{% include 'hr/_pagination.html' %}
+{% endblock %}

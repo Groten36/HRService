@@ -1,0 +1,71 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}Pulpit{% endblock %}
+{% block hr_content %}
+<h1>Dzień dobry, {{ user.first_name|default:user.username }}!</h1>
+
+<div class="stats">
+  <div class="stat">
+    <span class="stat__label">Pozostały urlop</span>
+    {% if profile %}
+      <span class="stat__value">{{ profile.leave_remaining }} <small>z {{ profile.leave_total }} dni</small></span>
+    {% else %}
+      <span class="stat__value stat__value--muted">—</span>
+    {% endif %}
+  </div>
+  <div class="stat">
+    <span class="stat__label">Najbliższy urlop</span>
+    {% if upcoming_leave %}
+      <span class="stat__value stat__value--sm">{{ upcoming_leave.start_date|date:"j E" }} – {{ upcoming_leave.end_date|date:"j E" }}</span>
+    {% else %}
+      <span class="stat__value stat__value--muted stat__value--sm">brak zaplanowanych</span>
+    {% endif %}
+  </div>
+  {% if perms.hr.review_leaverequest %}
+    <a class="stat stat--link" href="{% url 'hr:leave_review' %}">
+      <span class="stat__label">Wnioski do rozpatrzenia</span>
+      <span class="stat__value">{{ hr_pending_count }}</span>
+    </a>
+  {% endif %}
+</div>
+
+{% if not profile %}
+  <div class="alert alert--warning">Twój profil kadrowy nie został jeszcze uzupełniony. Skontaktuj się z działem HR.</div>
+{% endif %}
+
+<div class="hr-columns">
+  <div>
+    <div class="section-head">
+      <h2>Ogłoszenia</h2>
+      <a href="{% url 'hr:announcements' %}">Wszystkie &rarr;</a>
+    </div>
+    {% for a in announcements %}
+      <article class="card announcement{% if a.is_pinned %} announcement--pinned{% endif %}">
+        <h3><a href="{{ a.get_absolute_url }}">{{ a.title }}</a></h3>
+        <p class="muted small">{{ a.created_at|date:"j E Y" }}</p>
+        <p>{{ a.body|truncatewords:30 }}</p>
+      </article>
+    {% empty %}
+      <p class="muted">Brak ogłoszeń.</p>
+    {% endfor %}
+  </div>
+  <div>
+    <div class="section-head">
+      <h2>Moje wnioski</h2>
+      <a href="{% url 'hr:leave_create' %}" class="btn btn--small">+ Nowy wniosek</a>
+    </div>
+    {% if my_requests %}
+      <ul class="simple-list">
+        {% for leave in my_requests %}
+          <li>
+            <a href="{{ leave.get_absolute_url }}">{{ leave.get_leave_type_display }}</a>
+            <span class="muted small">{{ leave.start_date|date:"j.m" }}–{{ leave.end_date|date:"j.m.Y" }} · {{ leave.days }} dni</span>
+            {% include 'hr/_status.html' %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">Nie złożono jeszcze żadnego wniosku.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

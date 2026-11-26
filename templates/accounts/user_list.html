@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Użytkownicy | HR Service{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Użytkownicy</h1>
+  {% if perms.auth.add_user %}<a href="{% url 'user_create' %}" class="btn">+ Dodaj użytkownika</a>{% endif %}
+</div>
+
+<details class="roles-help">
+  <summary>Jakie uprawnienia mają role?</summary>
+  <dl class="details">
+    {% for r in roles %}<dt>{{ r.name }}</dt><dd>{{ r.description }}</dd>{% endfor %}
+  </dl>
+</details>
+
+<form method="get" class="filters">
+  <div class="filters__field filters__field--grow">{{ filter_form.q.label_tag }}{{ filter_form.q }}</div>
+  <div class="filters__field">{{ filter_form.role.label_tag }}{{ filter_form.role }}</div>
+  <div class="filters__actions">
+    <button type="submit" class="btn">Filtruj</button>
+    {% if request.GET %}<a href="{{ request.path }}">Wyczyść</a>{% endif %}
+  </div>
+</form>
+
+{% if users %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Login</th><th>Imię i nazwisko</th><th>E-mail</th><th>Rola</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for u in users %}
+          <tr>
+            <td data-label="Login"><strong>{{ u.username }}</strong>{% if u == user %} <small class="muted">(Ty)</small>{% endif %}</td>
+            <td data-label="Imię i nazwisko">{{ u.get_full_name|default:"—" }}</td>
+            <td data-label="E-mail">{{ u.email|default:"—" }}</td>
+            <td data-label="Rola">
+              {% if u.is_superuser %}<span class="role role--superuser">Superużytkownik</span>
+              {% elif u.role %}<span class="role role--{{ u.role.key }}">{{ u.role.name }}</span>
+              {% else %}<span class="muted">brak</span>{% endif %}
+            </td>
+            <td data-label="Status">{% if u.is_active %}Aktywny{% else %}<span class="status status--rejected">Zablokowany</span>{% endif %}</td>
+            <td data-label="">
+              {% if not u.is_superuser or user.is_superuser %}
+                <span class="row-actions">
+                  {% if perms.auth.change_user %}<a href="{% url 'user_update' u.pk %}">Edytuj</a>
+                  <a href="{% url 'user_password' u.pk %}">Hasło</a>{% endif %}
+                  {% if perms.auth.delete_user and u != user %}<a href="{% url 'user_delete' u.pk %}" class="danger">Usuń</a>{% endif %}
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include 'hr/_pagination.html' %}
+{% else %}
+  <div class="empty"><p>Brak użytkowników spełniających kryteria.</p></div>
+{% endif %}
+{% endblock %}

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'accounts',
     'documents',
     'phonebook',
+    'hr',
 ]
 
 MIDDLEWARE = [
@@ -172,6 +173,7 @@ MAILERS = {
 
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', 'noreply@example.com')
 CONTACT_EMAIL = os.environ.get('DJANGO_CONTACT_EMAIL', 'kontakt@example.com')
+HR_EMAIL = os.environ.get('DJANGO_HR_EMAIL', 'kadry@example.com')
 
 
 # Production security (active when DEBUG=False)

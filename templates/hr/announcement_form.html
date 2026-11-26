@@ -1,0 +1,10 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}{% if object %}Edycja ogłoszenia{% else %}Nowe ogłoszenie{% endif %}{% endblock %}
+{% block hr_content %}
+<h1>{% if object %}Edycja: {{ object.title }}{% else %}Nowe ogłoszenie{% endif %}</h1>
+<form method="post" class="form card">
+  {% csrf_token %}
+  {% include 'partials/form.html' %}
+  <button type="submit" class="btn">{% if object %}Zapisz zmiany{% else %}Opublikuj{% endif %}</button>
+</form>
+{% endblock %}

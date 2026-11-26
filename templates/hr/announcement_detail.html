@@ -1,0 +1,19 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}{{ announcement.title }}{% endblock %}
+{% block hr_content %}
+<p><a href="{% url 'hr:announcements' %}">&larr; Wszystkie ogłoszenia</a></p>
+<article class="card">
+  <h1>{{ announcement.title }}</h1>
+  <p class="muted small">
+    {{ announcement.created_at|date:"j E Y, H:i" }}{% if announcement.created_by %} · {{ announcement.created_by.get_full_name|default:announcement.created_by.username }}{% endif %}
+    {% if not announcement.is_published %}<span class="tag tag--draft">Nieopublikowane</span>{% endif %}
+  </p>
+  <div class="prose">{{ announcement.body|linebreaks }}</div>
+  {% if perms.hr.change_announcement or perms.hr.delete_announcement %}
+    <div class="actions">
+      {% if perms.hr.change_announcement %}<a href="{% url 'hr:announcement_update' announcement.pk %}" class="btn btn--ghost">Edytuj</a>{% endif %}
+      {% if perms.hr.delete_announcement %}<a href="{% url 'hr:announcement_delete' announcement.pk %}" class="btn btn--danger">Usuń</a>{% endif %}
+    </div>
+  {% endif %}
+</article>
+{% endblock %}

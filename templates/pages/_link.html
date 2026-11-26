@@ -1,0 +1,5 @@
+<a class="link-card" href="{{ link.url }}"{% if link.is_external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+  <span class="link-card__title">{{ link.title }}{% if link.is_external %} <span class="link-card__ext" aria-label="(otwiera się w nowej karcie)">↗</span>{% endif %}</span>
+  {% if link.description %}<span class="link-card__desc">{{ link.description }}</span>{% endif %}
+  {% if link.domain %}<span class="link-card__domain">{{ link.domain }}</span>{% endif %}
+</a>

@@ -19,7 +19,7 @@ static/         css/main.css, js/main.js, img/
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py setup_documents   # grupa redaktorów + domyślne kategorie
+python manage.py setup_documents   # domyślne kategorie dokumentów
 python manage.py createsuperuser
 python manage.py runserver
 ```
@@ -30,13 +30,26 @@ Strona: http://127.0.0.1:8000/ · Panel admina: http://127.0.0.1:8000/admin/
 
 - `/dokumenty/` — lista z wyszukiwarką (tytuł, numer, opis) i filtrami (rodzaj, kategoria), paginacja.
 - Przeglądanie i pobieranie: obecnie bez logowania (`DOCUMENTS_REQUIRE_LOGIN=False`). **TODO: włączyć przed wdrożeniem.** Niezalogowani i pracownicy widzą tylko dokumenty opublikowane.
-- Dodawanie, edycja i usuwanie: użytkownicy z grupy **Redaktorzy dokumentów**
-  (przypisz w panelu admina) lub superuser. Redaktorzy widzą też nieopublikowane dokumenty.
+- Dodawanie, edycja i usuwanie: rola **Administrator IT** lub superuser. Administratorzy IT widzą też nieopublikowane dokumenty.
 - Pliki zapisywane są w `media/documents/` pod losowymi nazwami i **nie są serwowane publicznie**.
   Pobieranie odbywa się przez `/dokumenty/<id>/pobierz/`, który sprawdza uprawnienia.
   Przy produkcyjnym wdrożeniu nie wystawiaj katalogu `media/` przez serwer WWW.
 - Dozwolone formaty — dokumenty: pdf, doc(x), odt, xls(x), ods, txt, png, jpg (limit `DJANGO_DOCUMENT_MAX_UPLOAD_MB`, domyślnie 20); programy (`/dokumenty/programy/`): exe, msi, msix, zip, 7z, dmg, pkg, deb, rpm, appimage (limit `DJANGO_SOFTWARE_MAX_UPLOAD_MB`, domyślnie 1024).
 - Usunięcie lub podmiana dokumentu usuwa stary plik z dysku.
+
+## Role użytkowników
+
+Grupy ról tworzone są automatycznie przy `migrate` (ręcznie: `python manage.py setup_roles`).
+Definicje uprawnień: `accounts/roles.py`.
+
+| Rola | Uprawnienia |
+|---|---|
+| **Pracownik** (domyślna przy rejestracji) | przegląda stronę; w portalu HR czyta ogłoszenia, składa wnioski urlopowe, widzi swoje dane |
+| **Administrator IT** | zarządza użytkownikami (`/accounts/uzytkownicy/`), dokumentami, programami, kategoriami i przydatnymi linkami |
+| **Administrator HR** | ogłoszenia HR, rozpatrywanie wniosków urlopowych, profile kadrowe, książka telefoniczna |
+
+Zabezpieczenia: Administrator IT nie może nadać uprawnień superużytkownika, edytować ani usuwać
+superużytkowników, zmienić własnej roli ani usunąć własnego konta (zarówno w portalu, jak i w panelu admina).
 
 ## Konfiguracja
 

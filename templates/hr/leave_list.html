@@ -1,0 +1,30 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}Moje urlopy{% endblock %}
+{% block hr_content %}
+<div class="page-header">
+  <h1>Moje wnioski urlopowe</h1>
+  <a href="{% url 'hr:leave_create' %}" class="btn">+ Nowy wniosek</a>
+</div>
+{% if profile %}<p class="muted">Pozostało <strong>{{ profile.leave_remaining }}</strong> z {{ profile.leave_total }} dni urlopu wypoczynkowego (z uwzględnieniem oczekujących wniosków).</p>{% endif %}
+{% if leave_requests %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Rodzaj</th><th>Termin</th><th>Dni</th><th>Status</th><th>Złożono</th></tr></thead>
+      <tbody>
+        {% for leave in leave_requests %}
+          <tr>
+            <td data-label="Rodzaj"><a href="{{ leave.get_absolute_url }}">{{ leave.get_leave_type_display }}</a></td>
+            <td data-label="Termin">{{ leave.start_date|date:"j.m.Y" }} – {{ leave.end_date|date:"j.m.Y" }}</td>
+            <td data-label="Dni">{{ leave.days }}</td>
+            <td data-label="Status">{% include 'hr/_status.html' %}</td>
+            <td data-label="Złożono">{{ leave.created_at|date:"j.m.Y" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include 'hr/_pagination.html' %}
+{% else %}
+  <div class="empty"><p>Nie złożono jeszcze żadnego wniosku.</p></div>
+{% endif %}
+{% endblock %}

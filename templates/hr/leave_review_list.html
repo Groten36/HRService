@@ -1,0 +1,32 @@
+{% extends 'hr/base_hr.html' %}
+{% block hr_title %}Wnioski do rozpatrzenia{% endblock %}
+{% block hr_content %}
+<h1>Wnioski urlopowe</h1>
+<form method="get" class="filters">
+  <div class="filters__field filters__field--grow">{{ filter_form.q.label_tag }}{{ filter_form.q }}</div>
+  <div class="filters__field">{{ filter_form.status.label_tag }}{{ filter_form.status }}</div>
+  <div class="filters__actions"><button type="submit" class="btn">Filtruj</button></div>
+</form>
+{% if leave_requests %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Pracownik</th><th>Rodzaj</th><th>Termin</th><th>Dni</th><th>Status</th><th>Złożono</th></tr></thead>
+      <tbody>
+        {% for leave in leave_requests %}
+          <tr>
+            <td data-label="Pracownik"><a href="{{ leave.get_absolute_url }}"><strong>{{ leave.user.get_full_name|default:leave.user.username }}</strong></a></td>
+            <td data-label="Rodzaj">{{ leave.get_leave_type_display }}</td>
+            <td data-label="Termin">{{ leave.start_date|date:"j.m.Y" }} – {{ leave.end_date|date:"j.m.Y" }}</td>
+            <td data-label="Dni">{{ leave.days }}</td>
+            <td data-label="Status">{% include 'hr/_status.html' %}</td>
+            <td data-label="Złożono">{{ leave.created_at|date:"j.m.Y" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include 'hr/_pagination.html' %}
+{% else %}
+  <div class="empty"><p>Brak wniosków spełniających kryteria.</p></div>
+{% endif %}
+{% endblock %}
