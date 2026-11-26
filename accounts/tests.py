@@ -201,3 +201,17 @@ class UserManagementTests(TestCase):
         })
         self.employee.refresh_from_db()
         self.assertFalse(self.employee.is_superuser)
+
+
+class PasswordHashingTests(TestCase):
+    def test_new_passwords_use_argon2(self):
+        user = User.objects.create_user('a', password='TrudneHaslo123!')
+        self.assertTrue(user.password.startswith('argon2$argon2id$'))
+
+    def test_legacy_pbkdf2_password_upgraded_on_login(self):
+        from django.contrib.auth.hashers import make_password
+        user = User.objects.create(username='stary', password=make_password('TrudneHaslo123!', hasher='pbkdf2_sha256'))
+        self.assertTrue(user.password.startswith('pbkdf2_sha256$'))
+        self.assertTrue(self.client.login(username='stary', password='TrudneHaslo123!'))
+        user.refresh_from_db()
+        self.assertTrue(user.password.startswith('argon2$argon2id$'))

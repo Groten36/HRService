@@ -100,6 +100,19 @@ DATABASES = {
 }
 
 
+# Password hashing
+# Argon2id jest używany dla nowych haseł. Pozostałe hashery umożliwiają logowanie
+# kontom z hasłami zapisanymi wcześniej (PBKDF2) — przy logowaniu Django
+# automatycznie przehashowuje je na Argon2.
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.ScryptPasswordHasher',
+]
+
+
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
