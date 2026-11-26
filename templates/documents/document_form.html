@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Edycja dokumentu{% else %}Nowy dokument{% endif %} | HR Service{% endblock %}
+{% block content %}
+<p><a href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'documents:list' %}{% endif %}">&larr; Wróć</a></p>
+<h1>{% if object %}Edycja: {{ object.title }}{% else %}Nowy dokument{% endif %}</h1>
+<form method="post" enctype="multipart/form-data" class="form card">
+  {% csrf_token %}
+  {% include 'partials/form.html' %}
+  <button type="submit" class="btn">{% if object %}Zapisz zmiany{% else %}Dodaj dokument{% endif %}</button>
+</form>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load documents_tags %}
+{% block title %}{% if current_kind == 'software' %}Programy{% elif current_category %}{{ current_category.name }}{% else %}Dokumenty{% endif %} | HR Service{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    {% if current_category %}<p class="breadcrumb"><a href="{% url 'documents:list' %}">Dokumenty</a> / </p>{% endif %}
+    <h1>{% if current_kind == 'software' %}Programy{% elif current_category %}{{ current_category.name }}{% else %}Zarządzenia i porady{% endif %}</h1>
+    {% if current_kind == 'software' %}<p class="lead lead--small">Instalatory programów używanych w firmie.</p>{% endif %}
+  </div>
+  {% if perms.documents.add_document %}
+    <a href="{% url 'documents:create' %}{% if current_kind %}?kind={{ current_kind }}{% endif %}" class="btn">+ {% if current_kind == 'software' %}Dodaj program{% else %}Dodaj dokument{% endif %}</a>
+  {% endif %}
+</div>
+
+<form method="get" class="filters">
+  <div class="filters__field filters__field--grow">{{ filter_form.q.label_tag }}{{ filter_form.q }}</div>
+  {% if not current_kind %}<div class="filters__field">{{ filter_form.kind.label_tag }}{{ filter_form.kind }}</div>{% endif %}
+  {% if not current_category %}<div class="filters__field">{{ filter_form.category.label_tag }}{{ filter_form.category }}</div>{% endif %}
+  <div class="filters__actions">
+    <button type="submit" class="btn">Filtruj</button>
+    {% if request.GET %}<a href="{{ request.path }}">Wyczyść</a>{% endif %}
+  </div>
+</form>
+
+{% if documents %}
+  <ul class="doc-list">
+    {% for doc in documents %}
+      <li class="doc-item">
+        <span class="file-badge file-badge--{{ doc.extension|file_kind }}">{{ doc.extension }}</span>
+        <div class="doc-item__body">
+          <a href="{{ doc.get_absolute_url }}" class="doc-item__title">{{ doc.title }}</a>
+          <div class="doc-item__meta">
+            <span class="tag tag--{{ doc.kind }}">{{ doc.get_kind_display }}</span>
+            {% if doc.number %}<span>{% if doc.kind == 'software' %}wersja{% else %}nr{% endif %} {{ doc.number }}</span>{% endif %}
+            {% if doc.size %}<span>{{ doc.size|filesizeformat }}</span>{% endif %}
+            {% if doc.category and not current_category %}<a href="{% url 'documents:category' doc.category.slug %}">{{ doc.category }}</a>{% endif %}
+            <span>{{ doc.created_at|date:"j.m.Y" }}</span>
+            {% if not doc.is_published %}<span class="tag tag--draft">Nieopublikowany</span>{% endif %}
+          </div>
+        </div>
+        <a href="{% url 'documents:download' doc.pk %}" class="btn btn--small btn--ghost">Pobierz</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% if is_paginated %}
+    <nav class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">&larr; Poprzednia</a>
+      {% endif %}
+      <span>Strona {{ page_obj.number }} z {{ paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Następna &rarr;</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% else %}
+  <div class="empty">
+    <p>{% if current_kind == 'software' %}Brak programów do pobrania.{% else %}Brak dokumentów spełniających kryteria.{% endif %}</p>
+  </div>
+{% endif %}
+{% endblock %}

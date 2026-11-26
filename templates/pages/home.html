@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Strona główna | HR Service{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Baza wiedzy dla pracowników</h1>
+  <p class="lead">Wszystkie zarządzenia i porady w jednym miejscu — zawsze aktualne.</p>
+  <a href="{% url 'documents:list' %}" class="btn">Przeglądaj dokumenty</a>
+</section>
+
+<section class="grid">
+  <article class="card">
+    <h2>Zarządzenia</h2>
+    <p>Oficjalne zarządzenia i regulaminy obowiązujące w firmie.</p>
+    <a href="{% url 'documents:list' %}?kind=order">Zobacz zarządzenia &rarr;</a>
+  </article>
+  <article class="card">
+    <h2>Porady</h2>
+    <p>Praktyczne wskazówki: urlopy, BHP, sprawy kadrowe i IT.</p>
+    <a href="{% url 'documents:list' %}?kind=advice">Zobacz porady &rarr;</a>
+  </article>
+  <article class="card">
+    <h2>Telefony</h2>
+    <p>Wyszukaj numer telefonu, pokój lub e-mail współpracownika.</p>
+    <a href="{% url 'phonebook:list' %}">Otwórz książkę telefoniczną &rarr;</a>
+  </article>
+  <article class="card">
+    <h2>Programy</h2>
+    <p>Instalatory programów potrzebnych do pracy.</p>
+    <a href="{% url 'documents:software' %}">Zobacz programy &rarr;</a>
+  </article>
+</section>
+{% endblock %}

@@ -1,0 +1,45 @@
+<p class="results-count">Znaleziono: <strong>{% if paginator %}{{ paginator.count }}{% else %}{{ employees|length }}{% endif %}</strong></p>
+{% if employees %}
+  <div class="table-wrap">
+    <table class="phone-table">
+      <thead>
+        <tr>
+          <th>Nazwisko i imię</th>
+          <th>Wydział / dział</th>
+          <th>Stanowisko</th>
+          <th>Telefon</th>
+          <th>Pokój</th>
+          <th>E-mail</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in employees %}
+          <tr>
+            <td data-label="Osoba"><strong>{{ e.last_name }} {{ e.first_name }}</strong></td>
+            <td data-label="Wydział">{{ e.department }}{% if e.section %}<br><small class="muted">{{ e.section.name }}</small>{% endif %}</td>
+            <td data-label="Stanowisko">{{ e.position|default:"—" }}</td>
+            <td data-label="Telefon"><a href="tel:{{ e.phone_href }}" class="phone">{{ e.phone }}</a></td>
+            <td data-label="Pokój">{{ e.room|default:"—" }}</td>
+            <td data-label="E-mail">{% if e.email %}<a href="mailto:{{ e.email }}">{{ e.email }}</a>{% else %}—{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <nav class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">&larr; Poprzednia</a>
+      {% endif %}
+      <span>Strona {{ page_obj.number }} z {{ paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Następna &rarr;</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% else %}
+  <div class="empty"><p>Nie znaleziono osób spełniających kryteria.</p></div>
+{% endif %}
+
+<template data-section-options>{{ form.section }}</template>

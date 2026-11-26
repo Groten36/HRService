@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Profil | HR Service{% endblock %}
+{% block content %}
+<h1>Twój profil</h1>
+<dl class="details">
+  <dt>Login</dt><dd>{{ user.username }}</dd>
+  <dt>E-mail</dt><dd>{{ user.email|default:"—" }}</dd>
+  <dt>Data dołączenia</dt><dd>{{ user.date_joined|date:"j E Y" }}</dd>
+</dl>
+<p><a href="{% url 'password_change' %}">Zmień hasło</a></p>
+{% endblock %}

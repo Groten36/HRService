@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Usuwanie dokumentu | HR Service{% endblock %}
+{% block content %}
+<div class="auth-box">
+  <h1>Usunąć dokument?</h1>
+  <p>Dokument <strong>{{ object.title }}</strong> wraz z plikiem zostanie trwale usunięty.</p>
+  <form method="post" class="actions">
+    {% csrf_token %}
+    <button type="submit" class="btn btn--danger">Tak, usuń</button>
+    <a href="{{ object.get_absolute_url }}" class="btn btn--ghost">Anuluj</a>
+  </form>
+</div>
+{% endblock %}

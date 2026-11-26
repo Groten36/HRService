@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Kontakt | HR Service{% endblock %}
+{% block content %}
+<h1>Kontakt</h1>
+<form method="post" class="form" novalidate>
+  {% csrf_token %}
+  {% include 'partials/form.html' %}
+  <button type="submit" class="btn">Wyślij</button>
+</form>
+{% endblock %}

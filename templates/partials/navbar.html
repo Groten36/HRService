@@ -1,0 +1,43 @@
+{% url 'pages:home' as home_url %}{% url 'pages:about' as about_url %}{% url 'pages:contact' as contact_url %}
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a class="navbar__brand" href="{{ home_url }}">HR Service</a>
+    <button class="navbar__toggle" aria-label="Menu" aria-expanded="false" data-nav-toggle>&#9776;</button>
+    <nav class="navbar__links" data-nav>
+      <a href="{{ home_url }}" {% if request.path == home_url %}class="active"{% endif %}>Strona główna</a>
+      <a href="{{ about_url }}" {% if request.path == about_url %}class="active"{% endif %}>O nas</a>
+      <a href="{{ contact_url }}" {% if request.path == contact_url %}class="active"{% endif %}>Kontakt</a>
+      {% url 'documents:list' as docs_url %}
+      <div class="dropdown" data-dropdown>
+        <button type="button" class="dropdown__toggle{% if '/dokumenty/' in request.path and '/programy/' not in request.path %} active{% endif %}"
+                aria-haspopup="true" aria-expanded="false" data-dropdown-toggle>
+          Dokumenty <span class="dropdown__caret" aria-hidden="true">&#9662;</span>
+        </button>
+        <div class="dropdown__menu" role="menu">
+          <a href="{{ docs_url }}" role="menuitem" {% if request.path == docs_url %}class="active"{% endif %}>Wszystkie dokumenty</a>
+          {% if nav_categories %}<hr>{% endif %}
+          {% for cat in nav_categories %}
+            {% url 'documents:category' cat.slug as cat_url %}
+            <a href="{{ cat_url }}" role="menuitem" {% if request.path == cat_url %}class="active"{% endif %}>
+              {{ cat.name }} <span class="dropdown__count">{{ cat.doc_count }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% url 'phonebook:list' as phones_url %}
+      <a href="{{ phones_url }}" {% if request.path == phones_url %}class="active"{% endif %}>Telefony</a>
+      {% url 'documents:software' as software_url %}
+      <a href="{{ software_url }}" {% if request.path == software_url %}class="active"{% endif %}>Programy</a>
+      {% if user.is_authenticated %}
+        {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+        <a href="{% url 'profile' %}">{{ user.username }}</a>
+        <form method="post" action="{% url 'logout' %}" class="inline">
+          {% csrf_token %}<button type="submit" class="link-button">Wyloguj</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Zaloguj</a>
+        <a href="{% url 'signup' %}" class="btn btn--small">Rejestracja</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>

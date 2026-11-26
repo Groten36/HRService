@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load documents_tags %}
+{% block title %}{{ document.title }} | HR Service{% endblock %}
+{% block content %}
+<p><a href="{% url 'documents:list' %}">&larr; Wszystkie dokumenty</a></p>
+
+<article class="card doc-detail">
+  <div class="doc-detail__head">
+    <span class="file-badge file-badge--{{ document.extension|file_kind }}">{{ document.extension }}</span>
+    <div>
+      <span class="tag tag--{{ document.kind }}">{{ document.get_kind_display }}</span>
+      {% if not document.is_published %}<span class="tag tag--draft">Nieopublikowany</span>{% endif %}
+      <h1>{{ document.title }}</h1>
+    </div>
+  </div>
+
+  {% if document.description %}<div class="doc-detail__desc">{{ document.description|linebreaks }}</div>{% endif %}
+
+  <dl class="details">
+    {% if document.number %}<dt>{% if document.kind == 'software' %}Wersja{% else %}Numer{% endif %}</dt><dd>{{ document.number }}</dd>{% endif %}
+    <dt>Kategoria</dt><dd>{% if document.category %}<a href="{% url 'documents:category' document.category.slug %}">{{ document.category }}</a>{% else %}—{% endif %}</dd>
+    {% if document.effective_date %}<dt>Obowiązuje od</dt><dd>{{ document.effective_date|date:"j E Y" }}</dd>{% endif %}
+    <dt>Plik</dt><dd>{{ document.original_filename }}{% if document.size %} ({{ document.size|filesizeformat }}){% endif %}</dd>
+    <dt>Dodano</dt><dd>{{ document.created_at|date:"j E Y, H:i" }}{% if document.uploaded_by %} przez {{ document.uploaded_by.get_full_name|default:document.uploaded_by.username }}{% endif %}</dd>
+    {% if document.updated_at|date:"U" != document.created_at|date:"U" %}<dt>Aktualizacja</dt><dd>{{ document.updated_at|date:"j E Y, H:i" }}</dd>{% endif %}
+  </dl>
+
+  <div class="actions">
+    <a href="{% url 'documents:download' document.pk %}" class="btn">{% if document.kind == 'software' %}Pobierz instalator{% else %}Pobierz plik{% endif %}</a>
+    {% if document.extension == 'PDF' %}
+      <a href="{% url 'documents:download' document.pk %}?inline=1" class="btn btn--ghost" target="_blank" rel="noopener">Otwórz w przeglądarce</a>
+    {% endif %}
+    {% if perms.documents.change_document %}
+      <a href="{% url 'documents:update' document.pk %}" class="btn btn--ghost">Edytuj</a>
+    {% endif %}
+    {% if perms.documents.delete_document %}
+      <a href="{% url 'documents:delete' document.pk %}" class="btn btn--danger">Usuń</a>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}

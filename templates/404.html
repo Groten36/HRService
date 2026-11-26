@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Nie znaleziono | HR Service{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>404</h1>
+  <p class="lead">Strona, której szukasz, nie istnieje.</p>
+  <a href="{% url 'pages:home' %}" class="btn">Wróć na stronę główną</a>
+</section>
+{% endblock %}

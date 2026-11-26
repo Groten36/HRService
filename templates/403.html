@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Brak dostępu | HR Service{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>403</h1>
+  <p class="lead">Nie masz uprawnień do tej strony.</p>
+  <a href="{% url 'pages:home' %}" class="btn">Wróć na stronę główną</a>
+</section>
+{% endblock %}
