@@ -5,12 +5,6 @@ from django.contrib.auth.models import User
 from .roles import ROLE_CHOICES, get_role
 
 
-class SignUpForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields = ('username', 'email')
-
-
 class UserCreateForm(UserCreationForm):
     role = forms.ChoiceField(label='Rola', choices=ROLE_CHOICES, initial='employee')
 

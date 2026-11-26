@@ -1,28 +1,14 @@
 from django.contrib import messages
-from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, FormView, ListView, TemplateView, UpdateView
 
-from .forms import AdminSetPasswordForm, SignUpForm, UserCreateForm, UserFilterForm, UserUpdateForm
-from .roles import EMPLOYEE, ROLES, ROLES_BY_KEY, get_role, set_role
-
-
-class SignUpView(CreateView):
-    form_class = SignUpForm
-    template_name = 'registration/signup.html'
-    success_url = reverse_lazy('pages:home')
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        set_role(self.object, EMPLOYEE.key)
-        login(self.request, self.object)
-        messages.success(self.request, 'Konto zostało utworzone. Witaj!')
-        return response
+from .forms import AdminSetPasswordForm, UserCreateForm, UserFilterForm, UserUpdateForm
+from .roles import ROLES, ROLES_BY_KEY, get_role, set_role
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):

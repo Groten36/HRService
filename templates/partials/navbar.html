@@ -40,8 +40,7 @@
           {% csrf_token %}<button type="submit" class="link-button">Wyloguj</button>
         </form>
       {% else %}
-        <a href="{% url 'login' %}">Zaloguj</a>
-        <a href="{% url 'signup' %}" class="btn btn--small">Rejestracja</a>
+        <a href="{% url 'login' %}" class="btn btn--small">Zaloguj</a>
       {% endif %}
     </nav>
   </div>

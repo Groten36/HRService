@@ -8,7 +8,7 @@ Boilerplate strony internetowej w Django 6.1.
 hrservice/      konfiguracja projektu (settings, urls, wsgi/asgi)
 pages/          strony publiczne: główna, o nas, kontakt (formularz -> e-mail)
 documents/      zarządzenia i porady: lista, wyszukiwarka, pobieranie, CRUD
-accounts/       rejestracja, profil; logowanie/wylogowanie/reset hasła z django.contrib.auth
+accounts/       role, zarządzanie użytkownikami, profil; logowanie/wylogowanie/reset hasła z django.contrib.auth
 templates/      base.html, partials/, pages/, registration/, 404/500
 static/         css/main.css, js/main.js, img/
 ```
@@ -44,9 +44,11 @@ Definicje uprawnień: `accounts/roles.py`.
 
 | Rola | Uprawnienia |
 |---|---|
-| **Pracownik** (domyślna przy rejestracji) | przegląda stronę; w portalu HR czyta ogłoszenia, składa wnioski urlopowe, widzi swoje dane |
+| **Pracownik** (domyślna dla nowych kont) | przegląda stronę; w portalu HR czyta ogłoszenia, składa wnioski urlopowe, widzi swoje dane |
 | **Administrator IT** | zarządza użytkownikami (`/accounts/uzytkownicy/`), dokumentami, programami, kategoriami i przydatnymi linkami |
 | **Administrator HR** | ogłoszenia HR, rozpatrywanie wniosków urlopowych, profile kadrowe, książka telefoniczna |
+
+Publiczna rejestracja jest wyłączona — konta zakłada wyłącznie superużytkownik lub Administrator IT.
 
 Zabezpieczenia: Administrator IT nie może nadać uprawnień superużytkownika, edytować ani usuwać
 superużytkowników, zmienić własnej roli ani usunąć własnego konta (zarówno w portalu, jak i w panelu admina).

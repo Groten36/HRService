@@ -13,16 +13,35 @@ def make_user(username, role=None, **kw):
 
 
 class AccountsTests(TestCase):
-    def test_signup_creates_employee_and_logs_in(self):
-        response = self.client.post(reverse('signup'), {
-            'username': 'nowy', 'email': 'nowy@example.com',
+    def test_public_signup_is_disabled(self):
+        response = self.client.get('/accounts/rejestracja/')
+        self.assertEqual(response.status_code, 404)
+        self.assertNotContains(self.client.get(reverse('login')), 'rejestracja')
+
+    def test_new_user_created_by_it_defaults_to_employee(self):
+        it = make_user('it', IT_ADMIN)
+        self.client.force_login(it)
+        self.assertContains(self.client.get(reverse('user_create')), '<option value="employee" selected>')
+
+    def test_superuser_can_create_users(self):
+        root = User.objects.create_superuser('root', 'root@example.com', 'x')
+        self.client.force_login(root)
+        response = self.client.post(reverse('user_create'), {
+            'username': 'nowy', 'email': 'nowy@example.com', 'role': 'employee',
             'password1': 'BardzoTrudneHaslo123!', 'password2': 'BardzoTrudneHaslo123!',
         })
-        self.assertRedirects(response, reverse('pages:home'))
-        user = User.objects.get(username='nowy')
-        self.assertEqual(get_role(user), EMPLOYEE)
-        self.assertFalse(user.is_staff)
-        self.assertIn('_auth_user_id', self.client.session)
+        self.assertRedirects(response, reverse('user_list'))
+        self.assertEqual(get_role(User.objects.get(username='nowy')), EMPLOYEE)
+
+    def test_hr_and_employee_cannot_create_users(self):
+        for role in (EMPLOYEE, HR_ADMIN):
+            self.client.force_login(make_user(f'u_{role.key}', role))
+            response = self.client.post(reverse('user_create'), {
+                'username': 'intruz', 'email': 'i@example.com', 'role': 'it_admin',
+                'password1': 'BardzoTrudneHaslo123!', 'password2': 'BardzoTrudneHaslo123!',
+            })
+            self.assertEqual(response.status_code, 403)
+        self.assertFalse(User.objects.filter(username='intruz').exists())
 
     def test_profile_requires_login(self):
         response = self.client.get(reverse('profile'))
