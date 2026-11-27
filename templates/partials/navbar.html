@@ -33,12 +33,22 @@
       {% url 'pages:links' as links_url %}
       <a href="{{ links_url }}" {% if request.path == links_url %}class="active"{% endif %}>Przydatne linki</a>
       {% if user.is_authenticated %}
-        {% if perms.auth.change_user %}{% url 'user_list' as users_url %}<a href="{{ users_url }}" {% if '/uzytkownicy/' in request.path %}class="active"{% endif %}>Użytkownicy</a>{% endif %}
-        {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
-        <a href="{% url 'profile' %}">{{ user.username }}</a>
-        <form method="post" action="{% url 'logout' %}" class="inline">
-          {% csrf_token %}<button type="submit" class="link-button">Wyloguj</button>
-        </form>
+        <div class="dropdown dropdown--right" data-dropdown>
+          <button type="button" class="dropdown__toggle user-toggle{% if '/accounts/' in request.path %} active{% endif %}"
+                  aria-haspopup="true" aria-expanded="false" data-dropdown-toggle>
+            <span class="avatar" aria-hidden="true">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+            {{ user.username }} <span class="dropdown__caret" aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="dropdown__menu" role="menu">
+            <a href="{% url 'profile' %}" role="menuitem">Mój profil</a>
+            {% if perms.auth.view_user %}<a href="{% url 'user_list' %}" role="menuitem" {% if '/uzytkownicy/' in request.path %}class="active"{% endif %}>Użytkownicy</a>{% endif %}
+            {% if user.is_staff %}<a href="{% url 'admin:index' %}" role="menuitem">Panel administracyjny</a>{% endif %}
+            <hr>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}<button type="submit" class="dropdown__button" role="menuitem">Wyloguj</button>
+            </form>
+          </div>
+        </div>
       {% else %}
         <a href="{% url 'login' %}" class="btn btn--small">Zaloguj</a>
       {% endif %}
