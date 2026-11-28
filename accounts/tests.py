@@ -215,3 +215,25 @@ class PasswordHashingTests(TestCase):
         self.assertTrue(self.client.login(username='stary', password='TrudneHaslo123!'))
         user.refresh_from_db()
         self.assertTrue(user.password.startswith('argon2$argon2id$'))
+
+
+class DemoUsersCommandTests(TestCase):
+    def test_creates_demo_users_with_roles_and_passwords(self):
+        from django.core.management import call_command
+        from .management.commands.setup_demo_users import DEMO_USERS
+
+        with self.settings(DEBUG=True):
+            call_command('setup_demo_users', stdout=open('/dev/null', 'w'))
+        expected = {None: None, 'it_admin': IT_ADMIN, 'hr_admin': HR_ADMIN, 'employee': EMPLOYEE}
+        for username, password, role, *_ in DEMO_USERS:
+            user = User.objects.get(username=username)
+            self.assertTrue(user.check_password(password))
+            self.assertEqual(user.is_superuser, role is None)
+            self.assertEqual(get_role(user), expected[role])
+
+    def test_refuses_without_debug(self):
+        from django.core.management import call_command
+        from django.core.management.base import CommandError
+
+        with self.settings(DEBUG=False), self.assertRaises(CommandError):
+            call_command('setup_demo_users')

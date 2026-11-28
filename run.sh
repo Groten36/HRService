@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Uruchamia aplikację jedną komendą: ./run.sh [adres:port]
 # Tworzy venv, instaluje zależności, wczytuje .env, migruje bazę,
-# tworzy domyślne dane i (przy pierwszym uruchomieniu) superużytkownika.
+# tworzy domyślne dane, konta przykładowe i (w razie braku) superużytkownika.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -34,7 +34,12 @@ echo "==> Migracje bazy danych"
 echo "==> Domyślne kategorie dokumentów"
 "$PY" manage.py setup_documents
 
-HAS_SUPERUSER=$("$PY" manage.py shell -c \
+if [ "${DJANGO_DEMO_USERS:-True}" = "True" ] && [ "${DJANGO_DEBUG:-True}" = "True" ]; then
+    echo "==> Konta przykładowe (patrz README.md)"
+    "$PY" manage.py setup_demo_users
+fi
+
+HAS_SUPERUSER=$("$PY" manage.py shell -v 0 -c \
     "from django.contrib.auth import get_user_model; print(get_user_model().objects.filter(is_superuser=True).exists())")
 if [ "$HAS_SUPERUSER" != "True" ]; then
     if [ -n "${DJANGO_SUPERUSER_USERNAME:-}" ] && [ -n "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then

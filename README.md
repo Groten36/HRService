@@ -28,6 +28,22 @@ kategorie dokumentów, przy pierwszym uruchomieniu prosi o utworzenie superużyt
 (lub tworzy go bez pytania z `DJANGO_SUPERUSER_USERNAME` / `DJANGO_SUPERUSER_PASSWORD` /
 `DJANGO_SUPERUSER_EMAIL`) i startuje serwer.
 
+### Konta przykładowe
+
+Przy `DJANGO_DEBUG=True` skrypt `run.sh` tworzy konta do testów (ręcznie:
+`python manage.py setup_demo_users`; wyłączenie: `DJANGO_DEMO_USERS=False`).
+
+| Login | Hasło | Rola |
+|---|---|---|
+| `admin` | `Admin!2026` | superużytkownik (pełny dostęp, panel admina) |
+| `it` | `AdminIT!2026` | Administrator IT |
+| `kadry` | `AdminHR!2026` | Administrator HR |
+| `anna` | `Pracownik!2026` | Pracownik |
+
+Istniejące konta o tych loginach nie są zmieniane — aby przywrócić im powyższe hasła i role:
+`python manage.py setup_demo_users --reset`. Komenda odmawia działania przy `DEBUG=False`
+(hasła są jawne) — **nie używaj tych kont na produkcji**.
+
 Ręcznie, krok po kroku:
 
 ```bash
@@ -35,6 +51,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py setup_documents   # domyślne kategorie dokumentów
+python manage.py setup_demo_users  # konta przykładowe (opcjonalnie)
 python manage.py createsuperuser
 python manage.py runserver
 ```
