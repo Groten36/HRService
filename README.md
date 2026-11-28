@@ -15,6 +15,21 @@ static/         css/main.css, js/main.js, img/
 
 ## Uruchomienie
 
+Jedną komendą:
+
+```bash
+./run.sh                 # domyślnie http://127.0.0.1:8000/
+./run.sh 0.0.0.0:8000    # opcjonalnie inny adres/port
+```
+
+Skrypt tworzy `.venv` (jeśli nie istnieje), instaluje zależności (tylko gdy zmienił się
+`requirements.txt`), wczytuje `.env` (jeśli istnieje), wykonuje migracje, tworzy domyślne
+kategorie dokumentów, przy pierwszym uruchomieniu prosi o utworzenie superużytkownika
+(lub tworzy go bez pytania z `DJANGO_SUPERUSER_USERNAME` / `DJANGO_SUPERUSER_PASSWORD` /
+`DJANGO_SUPERUSER_EMAIL`) i startuje serwer.
+
+Ręcznie, krok po kroku:
+
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
